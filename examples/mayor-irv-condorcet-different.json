@@ -1,0 +1,18 @@
+[
+    {
+        "count": 35,
+        "ranking": ["Bob", "Caretaker", "Brown"]
+    },
+    {
+        "count": 41,
+        "ranking": ["Brown", "Caretaker", "Bob"]
+    },
+    {
+        "count": 14,
+        "ranking": ["Caretaker", "Bob", "Brown"]
+    },
+    {
+        "count": 10,
+        "ranking": ["Caretaker", "Brown", "Bob"]
+    }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "count": 5,
+    "ranking": ["A", "B", "C"]
+  },
+  {
+    "count": 8,
+    "ranking": ["B", "C", "A"]
+  },
+  {
+    "count": 6,
+    "ranking": ["C", "A", "B"]
+  }
+]
