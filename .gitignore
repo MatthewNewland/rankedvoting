@@ -1,8 +1,4 @@
 **/*.pyc
 __pycache__
-<<<<<<< HEAD
-__pypackages__
-=======
 __pypackages__
 scratch
->>>>>>> c06e8e0 (Initial commit)
