@@ -57,6 +57,7 @@ class Result:
 
         out.append(f"{len(self.ballots)} ballots cast")
         out.append(f"{len(self.winners)} seats elected")
+        out.append(f"{int(len(self.ballots) / (len(self.winners) + 1)) + 1} votes to be elected")
 
         for i, round in enumerate(self.rounds):
             out.append(f"Round {i + 1}:")
