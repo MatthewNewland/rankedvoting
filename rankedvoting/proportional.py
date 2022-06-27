@@ -26,6 +26,25 @@ def dhondt(vote_map: Mapping[str, int], seats: int) -> Counter[str]:
     return seat_result
 
 
+def hamilton(vote_map: Mapping[str, int], seats: int) -> Counter[str]:
+    seat_result = Counter()
+    remainders = {}
+    total_votes = sum(vote_map.values())
+    quota = total_votes / seats
+    # Apportion the int-part of the seats
+    for party, votes in vote_map.items():
+        quotient, remainder = divmod(votes, quota)
+        seat_result[party] = quotient
+        remainders[party] = remainder
+
+    while sum(seat_result.values()) < seats:
+        next_seat_earned = max(remainders, key=lambda party: remainders[party])
+        seat_result[next_seat_earned] += 1
+        del remainders[next_seat_earned]
+
+    return seat_result
+
+
 def display_result(vote_map: Mapping[str, int], result: Counter[str]):
     total_votes = sum(vote_map.values())
     total_seats = sum(result.values())
@@ -43,10 +62,19 @@ def display_result(vote_map: Mapping[str, int], result: Counter[str]):
     print(tabulate.tabulate(table, headers))
 
 
-def main(party_file: str, seats: int = typer.Option(..., "--seats", "-s")):
+def main(
+    party_file: str,
+    seats: int = typer.Option(..., "--seats", "-s"),
+    method: str = typer.Option("dhondt", "--method", "-m")
+):
     vote_map = get_votemap_from_file(party_file)
-    result = dhondt(vote_map, seats)
+    match method:
+        case "hamilton" | "webster":
+            result = hamilton(vote_map, seats)
+        case "dhondt" | _:
+            result = dhondt(vote_map, seats)
     display_result(vote_map, result)
+
 
 def get_votemap_from_file(party_file) -> dict[str, int]:
     return json.loads(Path(party_file).read_text())

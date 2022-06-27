@@ -20,9 +20,14 @@ def condorcet(ballot_file: str, diff: bool = False):
 
 
 @app.command()
-def proportional(vote_map_file: str, seats: int = typer.Option(..., "--seats", "-s")):
+def proportional(
+    vote_map_file: str,
+    seats: int = typer.Option(..., "--seats", "-s"),
+    method: str = typer.Option("dhondt", "--method", "-m"),
+):
     from .proportional import main
-    main(vote_map_file, seats)
+
+    main(vote_map_file, seats, method)
 
 
 if __name__ == "__main__":
