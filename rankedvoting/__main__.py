@@ -1,34 +1,20 @@
 from typer import Typer
-import typer
-
 
 app = Typer(name="rankedvoting")
 
+from .stv import main as stv_main
 
-@app.command()
-def stv(ballot_file: str, seats: int = 1):
-    from .stv import main
+app.command("stv")(stv_main)
 
-    main(ballot_file, seats)
+from .condorcet import main as condorcet_main
 
+app.command("condorcet")(condorcet_main)
 
-@app.command()
-def condorcet(ballot_file: str, diff: bool = False):
-    from .condorcet import main
+from .proportional import main as proportional_main
 
-    main(ballot_file, diff)
+app.command("proportional")(proportional_main)
 
+from .btr_irv import main as btr_irv_main
+app.command("btr-irv")(btr_irv_main)
 
-@app.command()
-def proportional(
-    vote_map_file: str,
-    seats: int = typer.Option(..., "--seats", "-s"),
-    method: str = typer.Option("dhondt", "--method", "-m"),
-):
-    from .proportional import main
-
-    main(vote_map_file, seats, method)
-
-
-if __name__ == "__main__":
-    app()
+app()

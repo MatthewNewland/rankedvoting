@@ -26,6 +26,22 @@ def dhondt(vote_map: Mapping[str, int], seats: int) -> Counter[str]:
     return seat_result
 
 
+def webster(vote_map: Mapping[str, int], seats: int) -> Counter[str]:
+    seat_result = Counter()
+
+    while sum(seat_result.values()) < seats:
+        quotients = {}
+
+        for party, votes in vote_map.items():
+            quotients[party] = votes / (2*seat_result[party] + 1)
+
+        winner = max(quotients, key=lambda x: quotients[x])
+
+        seat_result[winner] += 1
+
+    return seat_result
+
+
 def hamilton(vote_map: Mapping[str, int], seats: int) -> Counter[str]:
     seat_result = Counter()
     remainders = {}
@@ -69,10 +85,12 @@ def main(
 ):
     vote_map = get_votemap_from_file(party_file)
     match method:
-        case "hamilton" | "webster":
+        case "hamilton":
             result = hamilton(vote_map, seats)
-        case "dhondt" | _:
+        case "dhondt":
             result = dhondt(vote_map, seats)
+        case "webster":
+            result = webster(vote_map, seats)
     display_result(vote_map, result)
 
 

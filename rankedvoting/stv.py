@@ -5,7 +5,7 @@ from typing import Mapping
 from tabulate import tabulate
 import typer
 
-from .base import Ballot, Candidate, get_ballots_from_file
+from .base import Ballot, Candidate, get_ballots_from_file, get_candidates_from_ballots
 
 
 @dataclass
@@ -121,10 +121,39 @@ def stv(ballots: list[Ballot], seats: int = 1) -> Result:
 
     return Result(winners, rounds, ballots)
 
+def rcv_bottom_up(ballots: list[Ballot], seats: int = 1) -> Result:
+    candidates = get_candidates_from_ballots(ballots)
+    rounds = []
 
-def main(ballot_file: str, seats: int = 1):
+    while len(candidates) > seats:
+        scores = Counter()
+        for ballot in ballots:
+            scores[ballot.top_live_choice] += 1
+
+        # Eliminate lowest scorer
+        remove_me = min(scores, key=lambda x: scores[x])
+        candidates.remove(remove_me)
+        for ballot in ballots:
+            ballot.remove(remove_me)
+
+        rounds.append(Round(scores, [], losers=[remove_me], ballots=ballots))
+
+    scores = Counter()
+    for ballot in ballots:
+        scores[ballot.top_live_choice] += 1
+
+    rounds.append(Round(scores, winners=candidates, losers=[], ballots=ballots))
+
+    result = Result(candidates, rounds, ballots)
+    return result
+
+
+def main(ballot_file: str, seats: int = 1, top: bool = False):
     ballots = get_ballots_from_file(ballot_file)
-    result = stv(ballots, seats)
+    if top:
+        result = rcv_bottom_up(ballots, seats)
+    else:
+        result = stv(ballots, seats)
     print(result)
 
 
